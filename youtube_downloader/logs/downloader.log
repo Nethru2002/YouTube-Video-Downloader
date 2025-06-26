@@ -1,0 +1,6 @@
+2025-06-26 14:23:40,955 - ERROR - Video download failed: HTTP Error 400: Bad Request
+2025-06-26 14:26:09,540 - ERROR - Video download failed: HTTP Error 400: Bad Request
+2025-06-26 14:26:24,567 - ERROR - Video download failed: HTTP Error 400: Bad Request
+2025-06-26 14:26:32,799 - ERROR - Audio download failed: HTTP Error 400: Bad Request
+2025-06-26 14:29:00,447 - ERROR - Video download failed: [0;31mERROR:[0m You have requested merging of multiple formats but ffmpeg is not installed. Aborting due to --abort-on-error
+2025-06-26 14:32:26,876 - ERROR - Audio download failed: [0;31mERROR:[0m Postprocessing: ffprobe and ffmpeg not found. Please install or provide the path using --ffmpeg-location
