@@ -1,15 +1,15 @@
 class DownloadError(Exception):
-    """Base exception for download failures"""
+    """Base exception for download failures."""
     pass
 
 class InvalidURLError(DownloadError):
-    """Invalid YouTube URL"""
+    """Raised when the provided URL is malformed or not a valid YouTube link."""
     pass
 
 class ResolutionNotAvailableError(DownloadError):
-    """Requested resolution not available"""
+    """Raised when the requested resolution is unavailable for the target video."""
     pass
 
 class AgeRestrictedError(DownloadError):
-    """Age-restricted content"""
+    """Raised when content is age-restricted and requires authentication."""
     pass

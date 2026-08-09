@@ -1,56 +1,64 @@
-from downloader.core import YouTubeDownloader
-from config.settings import DEFAULT_DOWNLOAD_PATH
+import sys
 import logging
-from downloader.exceptions import DownloadError
+import logging.config
 
-def setup_logging():
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(levelname)s - %(message)s',
-        handlers=[
-            logging.FileHandler('logs/downloader.log'),
-            logging.StreamHandler()
-        ]
-    )
+from youtube_downloader.config.settings import DEFAULT_DOWNLOAD_PATH, LOGGING_CONFIG
+from youtube_downloader.downloader.core import YouTubeDownloader
+from youtube_downloader.downloader.exceptions import DownloadError
 
-def main():
-    setup_logging()
-    print("=== YouTube Video/Audio Downloader (No FFmpeg) ===")
-    print("Note: Downloads MP4 videos and M4A audio without conversion")
-    downloader = YouTubeDownloader(DEFAULT_DOWNLOAD_PATH)
+logging.config.dictConfig(LOGGING_CONFIG)
+logger = logging.getLogger(__name__)
+
+def main() -> None:
+    print("=== YouTube Video/Audio Downloader (Production Grade) ===")
+    print("Note: Downloads media streams safely without FFmpeg.")
+    
+    try:
+        downloader = YouTubeDownloader(DEFAULT_DOWNLOAD_PATH)
+    except Exception as e:
+        print(f"❌ Fatal Initialization Error: {e}")
+        sys.exit(1)
     
     while True:
         try:
-            url = input("\nEnter YouTube URL (or 'quit' to exit): ").strip()
+            url = input("\nEnter YouTube URL (or type 'quit' to exit): ").strip()
             if url.lower() in ['quit', 'exit']:
+                print("Exiting application. Goodbye!")
                 break
             
-            if not url.startswith(('http://', 'https://')):
-                print("❌ Invalid URL. Please include http:// or https://")
+            if not url:
                 continue
-            
+
+            print("🔍 Fetching media details...")
+            try:
+                info = downloader.get_video_info(url)
+                downloader.print_video_info(info)
+            except DownloadError as de:
+                print(f"❌ {de}")
+                continue
+
             print("\nDownload Options:")
-            print("1. Video (MP4)")
+            print("1. Video")
             print("2. Audio Only (M4A)")
             
             choice = input("Select option (1-2): ").strip()
             
             if choice == '1':
-                res = input("Resolution (720p or 1080p) [Enter for best MP4]: ").strip() or None
-                if res and res not in ['720p', '1080p']:
-                    print("⚠️ Only 720p or 1080p supported without FFmpeg. Using best MP4.")
-                    res = None
+                res = input("Target Resolution (e.g. 2160p, 1440p, 1080p, 720p) [Press Enter for absolute best]: ").strip() or None
                 downloader.download_video(url, res)
             elif choice == '2':
                 downloader.download_audio(url)
             else:
-                print("❌ Invalid choice")
+                print("❌ Invalid input option selected. Please choose 1 or 2.")
                 
-        except DownloadError as e:
-            print(f"❌ Error: {e}")
+        except DownloadError as de:
+            print(f"❌ Download Error: {de}")
+        except KeyboardInterrupt:
+            print("\nOperation aborted by user. Exiting...")
+            sys.exit(0)
         except Exception as e:
-            logging.error(f"Unexpected error: {e}")
-            print("❌ An unexpected error occurred. Check logs for details.")
+            logger.exception("An unexpected critical system error occurred.")
+            print("❌ An unexpected error occurred. Check logs/downloader.log for more details.")
 
 if __name__ == "__main__":
     main()

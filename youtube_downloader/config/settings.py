@@ -1,28 +1,35 @@
 from pathlib import Path
 
-# Base directory
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-# Default download path
 DEFAULT_DOWNLOAD_PATH = BASE_DIR / 'downloads'
 
-# Logging configuration
+LOGS_PATH = BASE_DIR / 'logs'
+LOGS_PATH.mkdir(parents=True, exist_ok=True)
+
 LOGGING_CONFIG = {
     'version': 1,
+    'disable_existing_loggers': False,
     'formatters': {
         'standard': {
-            'format': '%(asctime)s - %(levelname)s - %(message)s'
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
         },
     },
     'handlers': {
         'file': {
             'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs' / 'downloader.log',
-            'formatter': 'standard'
+            'filename': LOGS_PATH / 'downloader.log',
+            'formatter': 'standard',
+            'encoding': 'utf-8'
         },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+            'stream': 'ext://sys.stdout'
+        }
     },
     'root': {
-        'handlers': ['file'],
+        'handlers': ['file', 'console'],
         'level': 'INFO',
     },
 }
