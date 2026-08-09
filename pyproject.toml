@@ -10,10 +10,9 @@ readme = "README.md"
 authors = [
     { name = "Developer", email = "developer@example.com" }
 ]
-license = { text = "MIT" }
+license = "MIT"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
 requires-python = ">=3.8"
@@ -22,5 +21,13 @@ dependencies = [
     "tqdm>=4.65.0"
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+]
+
 [project.scripts]
 yt-download = "youtube_downloader.main:main"
+
+[tool.setuptools.packages.find]
+include = ["youtube_downloader*"]
